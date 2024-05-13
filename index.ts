@@ -310,5 +310,5 @@ export const initCallback = (() => {
       }
     })
   }
-})()
+})
 
