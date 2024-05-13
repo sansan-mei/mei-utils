@@ -1,15 +1,13 @@
-# mei-utils
+# @mei-utils
 
-To install dependencies:
+## web api
 
-```bash
-bun install
+```
+import * as f from "mei-utils/client"
 ```
 
-To run:
+## common api
 
-```bash
-bun run index.ts
 ```
-
-This project was created using `bun init` in bun v1.1.8. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+import * as f from "mei-utils"
+```
