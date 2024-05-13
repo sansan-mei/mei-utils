@@ -15,5 +15,6 @@
     ".": "./index.ts",
     "./client": "./client.ts"
   },
-  "main": "index.ts"
+  "main": "index.ts",
+  "scripts": {}
 }
