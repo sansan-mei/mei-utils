@@ -1,7 +1,13 @@
-import axios, { type AxiosResponse, type CreateAxiosDefaults } from "axios";
+import axios, { type AxiosInstance, type AxiosResponse, type CreateAxiosDefaults } from "axios";
 import { Methods } from "./enum";
 import type { HttpOption, MyResponse } from "./type";
 
+/**
+ * Description placeholder
+ *
+ * @type {*}
+ */
+let _request: AxiosInstance
 
 /**
  * Description placeholder
@@ -11,18 +17,13 @@ import type { HttpOption, MyResponse } from "./type";
  * @returns {*}
  */
 export function initAxios(options: CreateAxiosDefaults<any>) {
-  return axios.create(options);
+  const r = axios.create(options);
+  _request = r
+  return r
 }
 
-/**
- * Description placeholder
- *
- * @type {*}
- */
-const request = initAxios({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
-})
+export { axios }
+
 
 /**
  * Description placeholder
@@ -42,7 +43,7 @@ const request = initAxios({
  * @returns {*}
  */
 export function http<T = any>(
-  { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest, responseType }: HttpOption,
+  { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest, responseType, request = _request }: HttpOption,
 ) {
   const successHandler = (res: AxiosResponse<MyResponse<T>>) => {
 

@@ -1,4 +1,4 @@
-import type { AxiosProgressEvent, GenericAbortSignal } from "axios";
+import type { AxiosInstance, AxiosProgressEvent, GenericAbortSignal } from "axios";
 import type { Methods } from "./enum";
 
 type CamelCase<S extends string> =
@@ -32,6 +32,7 @@ export interface HttpOption {
   beforeRequest?: () => void
   afterRequest?: () => void
   responseType?: 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'
+  request?: AxiosInstance
 }
 
 export interface MyResponse<T = any> {
