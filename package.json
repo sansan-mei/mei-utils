@@ -10,11 +10,15 @@
     "typescript": "^5.0.0"
   },
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "exports": {
     ".": "./index.ts",
-    "./client": "./client.ts"
+    "./client": "./client.ts",
+    "./client-http": "./client-http.ts"
   },
   "main": "index.ts",
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {
+    "axios": "1.6.8"
+  }
 }
