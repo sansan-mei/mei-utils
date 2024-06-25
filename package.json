@@ -17,7 +17,9 @@
     "./client-http": "./client-http.ts"
   },
   "main": "index.ts",
-  "scripts": {},
+  "scripts": {
+    "build": "bun run build.mjs"
+  },
   "dependencies": {
     "axios": "1.6.8"
   }
