@@ -1,4 +1,4 @@
-import type { ConvertKeysToCamelCase, ConvertKeysToSnakeCase } from "./type";
+import type { ConvertKeysToCamelCase, ConvertKeysToSnakeCase, IPInfo } from "./type";
 
 /**
  * Description placeholder
@@ -312,3 +312,34 @@ export const initCallback = (() => {
   }
 })
 
+
+/**
+ * Description placeholder
+ *
+ * @async
+ * @returns {Promise<IPInfo>}
+ */
+export const getLocation = async (ip: string = ''): Promise<IPInfo> => {
+  const args: RequestInit = {
+    "headers": {
+      "accept": "*/*",
+      "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
+      "cache-control": "no-cache",
+      "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryAogZKzPP6ncoO7Z7",
+      "pragma": "no-cache",
+      "sec-ch-ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Google Chrome\";v=\"126\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin"
+    },
+    "referrer": "https://www.ip-score.com/" + (ip ? `custom/${ip}` : ''),
+    "referrerPolicy": "strict-origin-when-cross-origin",
+    "body": `------WebKitFormBoundaryAogZKzPP6ncoO7Z7\r\nContent-Disposition: form-data; name=\"ip\"\r\n\r\n${ip}\r\n------WebKitFormBoundaryAogZKzPP6ncoO7Z7--\r\n`,
+    "method": "POST",
+    "mode": "cors",
+    "credentials": "include"
+  }
+  return fetch("https://www.ip-score.com/json", { ...args }).then(res => res.json())
+}

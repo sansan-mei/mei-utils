@@ -41,3 +41,28 @@ export interface MyResponse<T = any> {
   message: string
   status: 'Success' | 'Fail' | 'Unauthorized'
 }
+
+interface GeoIP {
+  country: string;
+  countrycode: string;
+  region: string;
+  city: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+}
+
+interface GeoIP2 extends GeoIP {
+  zip?: string; // 可选字段，因为geoip1中没有zip
+}
+
+export interface IPInfo {
+  ip: string;
+  status: boolean;
+  useragent: string;
+  geoip1: GeoIP;
+  geoip2: GeoIP2;
+  isp: string;
+  org: string;
+  asn: string;
+}
