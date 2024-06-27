@@ -34,4 +34,4 @@ jobs:
         continue-on-error: true
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm publish
+          npm publish --provenance
