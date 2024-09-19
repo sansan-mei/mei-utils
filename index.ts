@@ -1,4 +1,8 @@
-import type { ConvertKeysToCamelCase, ConvertKeysToSnakeCase, IPInfo } from "./type";
+import type {
+  ConvertKeysToCamelCase,
+  ConvertKeysToSnakeCase,
+  IPInfo,
+} from "./type";
 
 /**
  * Description placeholder
@@ -280,38 +284,34 @@ export function convertKeysToSnakeCase<T extends AnyObject>(
   return newObj as ConvertKeysToSnakeCase<T>;
 }
 
-
 /**
  * Description placeholder
  *
  * @type {(...cbs: {}) => void}
  */
-export const initCallback = (() => {
-  const callbacks = new Set<Function>()
-  let timer: ReturnType<typeof setTimeout>
+export const initCallback = () => {
+  const callbacks = new Set<Function>();
+  let timer: ReturnType<typeof setTimeout>;
   return function r(...cbs: Function[]) {
     cbs.forEach((cb) => {
-      if (typeof cb === 'function') {
-        callbacks.add(cb) // Add the function to the set
+      if (typeof cb === "function") {
+        callbacks.add(cb); // Add the function to the set
 
-        clearTimeout(timer)
+        clearTimeout(timer);
         // Schedule the function for execution
         timer = setTimeout(() => {
           try {
-            cb() // Execute the function
+            cb(); // Execute the function
+          } catch (error) {
+            console.warn(error); // Catch and log any errors
+          } finally {
+            callbacks.has(cb) && callbacks.delete(cb); // Remove the function from the set after execution
           }
-          catch (error) {
-            console.warn(error) // Catch and log any errors
-          }
-          finally {
-            callbacks.has(cb) && callbacks.delete(cb) // Remove the function from the set after execution
-          }
-        }, 500)
+        }, 500);
       }
-    })
-  }
-})
-
+    });
+  };
+};
 
 /**
  * Description placeholder
@@ -319,27 +319,66 @@ export const initCallback = (() => {
  * @async
  * @returns {Promise<IPInfo>}
  */
-export const getLocation = async (ip: string = ''): Promise<IPInfo> => {
+export const getLocation = async (ip: string = ""): Promise<IPInfo> => {
   const args: RequestInit = {
-    "headers": {
-      "accept": "*/*",
+    headers: {
+      accept: "*/*",
       "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
       "cache-control": "no-cache",
-      "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryAogZKzPP6ncoO7Z7",
-      "pragma": "no-cache",
-      "sec-ch-ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Google Chrome\";v=\"126\"",
+      "content-type":
+        "multipart/form-data; boundary=----WebKitFormBoundaryAogZKzPP6ncoO7Z7",
+      pragma: "no-cache",
+      "sec-ch-ua":
+        '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
       "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": "\"Windows\"",
+      "sec-ch-ua-platform": '"Windows"',
       "sec-fetch-dest": "empty",
       "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-origin"
+      "sec-fetch-site": "same-origin",
     },
-    "referrer": "https://www.ip-score.com/" + (ip ? `custom/${ip}` : ''),
-    "referrerPolicy": "strict-origin-when-cross-origin",
-    "body": `------WebKitFormBoundaryAogZKzPP6ncoO7Z7\r\nContent-Disposition: form-data; name=\"ip\"\r\n\r\n${ip}\r\n------WebKitFormBoundaryAogZKzPP6ncoO7Z7--\r\n`,
-    "method": "POST",
-    "mode": "cors",
-    "credentials": "include"
+    referrer: "https://www.ip-score.com/" + (ip ? `custom/${ip}` : ""),
+    referrerPolicy: "strict-origin-when-cross-origin",
+    body: `------WebKitFormBoundaryAogZKzPP6ncoO7Z7\r\nContent-Disposition: form-data; name=\"ip\"\r\n\r\n${ip}\r\n------WebKitFormBoundaryAogZKzPP6ncoO7Z7--\r\n`,
+    method: "POST",
+    mode: "cors",
+    credentials: "include",
+  };
+  return fetch("https://www.ip-score.com/json", { ...args }).then((res) =>
+    res.json(),
+  );
+};
+
+export class Queue {
+  tasks: Function[];
+  executing: boolean;
+
+  constructor() {
+    this.tasks = [];
+    this.executing = false;
   }
-  return fetch("https://www.ip-score.com/json", { ...args }).then(res => res.json())
+
+  add(task: Function) {
+    return new Promise((resolve, reject) => {
+      this.tasks.push(async () => {
+        try {
+          const result = await task();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+      this.execute();
+    });
+  }
+
+  async execute() {
+    if (this.executing) return;
+    this.executing = true;
+    while (this.tasks.length) {
+      const task = this.tasks.shift();
+      if (!task) continue;
+      await task();
+    }
+    this.executing = false;
+  }
 }
