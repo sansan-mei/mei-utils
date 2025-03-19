@@ -3,18 +3,19 @@ import { Methods } from "./enum";
 import type { HttpOption, MyResponse } from "./type";
 
 /**
- * Description placeholder
- *
- * @type {*}
+ * 全局共享的axios实例
+ * 
+ * @private
+ * @type {AxiosInstance}
  */
 let _request: AxiosInstance
 
 /**
- * Description placeholder
+ * 初始化axios实例并设置为全局默认
  *
  * @export
- * @param {CreateAxiosDefaults<any>} options
- * @returns {*}
+ * @param {CreateAxiosDefaults<any>} options axios配置选项
+ * @returns {AxiosInstance} 创建的axios实例
  */
 export function initAxios(options: CreateAxiosDefaults<any>) {
   const r = axios.create(options);
@@ -22,25 +23,26 @@ export function initAxios(options: CreateAxiosDefaults<any>) {
   return r
 }
 
-export { axios }
+export { axios };
 
 
 /**
- * Description placeholder
+ * 通用HTTP请求函数，封装了各种HTTP方法的请求处理
  *
  * @export
- * @template [T=any]
- * @param {HttpOption} param0
- * @param {HttpOption} param0.url
- * @param {HttpOption} param0.data
- * @param {HttpOption} param0.method
- * @param {HttpOption} param0.headers
- * @param {HttpOption} param0.onDownloadProgress
- * @param {HttpOption} param0.signal
- * @param {HttpOption} param0.beforeRequest
- * @param {HttpOption} param0.afterRequest
- * @param {HttpOption} param0.responseType
- * @returns {*}
+ * @template [T=any] 响应数据类型
+ * @param {HttpOption} param0 请求配置对象
+ * @param {string} param0.url 请求URL
+ * @param {any} [param0.data] 请求数据
+ * @param {Methods} [param0.method] 请求方法（GET/POST/PUT/DELETE）
+ * @param {Record<string, string>} [param0.headers] 请求头
+ * @param {(progressEvent: AxiosProgressEvent) => void} [param0.onDownloadProgress] 下载进度回调
+ * @param {GenericAbortSignal} [param0.signal] 请求中断信号
+ * @param {() => void} [param0.beforeRequest] 请求前执行的回调
+ * @param {() => void} [param0.afterRequest] 请求后执行的回调
+ * @param {'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'} [param0.responseType] 响应类型
+ * @param {AxiosInstance} [param0.request] 自定义axios实例，默认使用全局实例
+ * @returns {Promise<MyResponse<T>>} 封装的响应对象
  */
 export function http<T = any>(
   { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest, responseType, request = _request }: HttpOption,
@@ -78,20 +80,20 @@ export function http<T = any>(
 }
 
 /**
- * Description placeholder
+ * 发送GET请求
  *
  * @export
- * @template [T=any]
- * @param {HttpOption} param0
- * @param {HttpOption} param0.url
- * @param {HttpOption} param0.data
- * @param {HttpOption} [param0.method=Methods.GET]
- * @param {HttpOption} param0.onDownloadProgress
- * @param {HttpOption} param0.signal
- * @param {HttpOption} param0.beforeRequest
- * @param {HttpOption} param0.afterRequest
- * @param {HttpOption} param0.responseType
- * @returns {Promise<MyResponse<T>>}
+ * @template [T=any] 响应数据类型
+ * @param {HttpOption} param0 请求配置对象
+ * @param {string} param0.url 请求URL
+ * @param {any} [param0.data] 查询参数
+ * @param {Methods} [param0.method=Methods.GET] 请求方法，固定为GET
+ * @param {(progressEvent: AxiosProgressEvent) => void} [param0.onDownloadProgress] 下载进度回调
+ * @param {GenericAbortSignal} [param0.signal] 请求中断信号
+ * @param {() => void} [param0.beforeRequest] 请求前执行的回调
+ * @param {() => void} [param0.afterRequest] 请求后执行的回调
+ * @param {'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'} [param0.responseType] 响应类型
+ * @returns {Promise<MyResponse<T>>} 封装的响应对象
  */
 export function get<T = any>(
   { url, data, method = Methods.GET, onDownloadProgress, signal, beforeRequest, afterRequest, responseType }: HttpOption,
@@ -109,20 +111,20 @@ export function get<T = any>(
 }
 
 /**
- * Description placeholder
+ * 发送POST请求
  *
  * @export
- * @template [T=any]
- * @param {HttpOption} param0
- * @param {HttpOption} param0.url
- * @param {HttpOption} param0.data
- * @param {HttpOption} [param0.method=Methods.POST]
- * @param {HttpOption} param0.headers
- * @param {HttpOption} param0.onDownloadProgress
- * @param {HttpOption} param0.signal
- * @param {HttpOption} param0.beforeRequest
- * @param {HttpOption} param0.afterRequest
- * @returns {Promise<MyResponse<T>>}
+ * @template [T=any] 响应数据类型
+ * @param {HttpOption} param0 请求配置对象
+ * @param {string} param0.url 请求URL
+ * @param {any} [param0.data] 请求体数据
+ * @param {Methods} [param0.method=Methods.POST] 请求方法，固定为POST
+ * @param {Record<string, string>} [param0.headers] 请求头
+ * @param {(progressEvent: AxiosProgressEvent) => void} [param0.onDownloadProgress] 下载进度回调
+ * @param {GenericAbortSignal} [param0.signal] 请求中断信号
+ * @param {() => void} [param0.beforeRequest] 请求前执行的回调
+ * @param {() => void} [param0.afterRequest] 请求后执行的回调
+ * @returns {Promise<MyResponse<T>>} 封装的响应对象
  */
 export function post<T = any>(
   { url, data, method = Methods.POST, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
@@ -140,20 +142,20 @@ export function post<T = any>(
 }
 
 /**
- * Description placeholder
+ * 发送DELETE请求
  *
  * @export
- * @template [T=any]
- * @param {HttpOption} param0
- * @param {HttpOption} param0.url
- * @param {HttpOption} param0.data
- * @param {HttpOption} [param0.method=Methods.DELETE]
- * @param {HttpOption} param0.headers
- * @param {HttpOption} param0.onDownloadProgress
- * @param {HttpOption} param0.signal
- * @param {HttpOption} param0.beforeRequest
- * @param {HttpOption} param0.afterRequest
- * @returns {Promise<MyResponse<T>>}
+ * @template [T=any] 响应数据类型
+ * @param {HttpOption} param0 请求配置对象
+ * @param {string} param0.url 请求URL
+ * @param {any} [param0.data] 查询参数
+ * @param {Methods} [param0.method=Methods.DELETE] 请求方法，固定为DELETE
+ * @param {Record<string, string>} [param0.headers] 请求头
+ * @param {(progressEvent: AxiosProgressEvent) => void} [param0.onDownloadProgress] 下载进度回调
+ * @param {GenericAbortSignal} [param0.signal] 请求中断信号
+ * @param {() => void} [param0.beforeRequest] 请求前执行的回调
+ * @param {() => void} [param0.afterRequest] 请求后执行的回调
+ * @returns {Promise<MyResponse<T>>} 封装的响应对象
  */
 export function Delete<T = any>(
   { url, data, method = Methods.DELETE, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
@@ -171,20 +173,20 @@ export function Delete<T = any>(
 }
 
 /**
- * Description placeholder
+ * 发送PUT请求
  *
  * @export
- * @template [T=any]
- * @param {HttpOption} param0
- * @param {HttpOption} param0.url
- * @param {HttpOption} param0.data
- * @param {HttpOption} [param0.method=Methods.PUT]
- * @param {HttpOption} param0.headers
- * @param {HttpOption} param0.onDownloadProgress
- * @param {HttpOption} param0.signal
- * @param {HttpOption} param0.beforeRequest
- * @param {HttpOption} param0.afterRequest
- * @returns {Promise<MyResponse<T>>}
+ * @template [T=any] 响应数据类型
+ * @param {HttpOption} param0 请求配置对象
+ * @param {string} param0.url 请求URL
+ * @param {any} [param0.data] 请求体数据
+ * @param {Methods} [param0.method=Methods.PUT] 请求方法，固定为PUT
+ * @param {Record<string, string>} [param0.headers] 请求头
+ * @param {(progressEvent: AxiosProgressEvent) => void} [param0.onDownloadProgress] 下载进度回调
+ * @param {GenericAbortSignal} [param0.signal] 请求中断信号
+ * @param {() => void} [param0.beforeRequest] 请求前执行的回调
+ * @param {() => void} [param0.afterRequest] 请求后执行的回调
+ * @returns {Promise<MyResponse<T>>} 封装的响应对象
  */
 export function put<T = any>(
   { url, data, method = Methods.PUT, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
